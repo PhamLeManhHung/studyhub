@@ -7,6 +7,6 @@ export default defineConfig({
   server: {
     port: 3000,
     open: true
-  }
+  },
+  base: '/studyhub/' // 👈 add this line (your repo name)
 })
-
