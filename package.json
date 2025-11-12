@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "type": "module",
   "description": "An all-in-one study platform for students to organize, learn, and stay motivated",
-  "homepage": "https://phamlemanhhung.github.io/studyhub/",
+  "homepage": "https://phamlemanhhung.github.io/studyhub1/",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
