@@ -8,7 +8,6 @@ import ResourceHub from './pages/ResourceHub.jsx'
 import LogicZone from './pages/LogicZone.jsx'
 import Motivation from './pages/Motivation.jsx'
 import StudyTools from './pages/StudyTools.jsx'
-import Community from './pages/Community.jsx'
 
 function App() {
   return (
@@ -23,7 +22,6 @@ function App() {
           <Route path="/logic-zone" element={<LogicZone />} />
           <Route path="/motivation" element={<Motivation />} />
           <Route path="/tools" element={<StudyTools />} />
-          <Route path="/community" element={<Community />} />
         </Routes>
       </Layout>
     </Router>
@@ -31,4 +29,3 @@ function App() {
 }
 
 export default App
-

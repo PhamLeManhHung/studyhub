@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
-import { Plus, Search, FileText, X, Edit2, Trash2, Tag, Sparkles, Lightbulb, BookOpen, Hash } from 'lucide-react'
+import { Plus, Search, FileText, X, Edit2, Trash2, Tag, Sparkles, Lightbulb, BookOpen, Hash, Loader2 } from 'lucide-react'
+import { summarizeText, explainText, generateQuestions, extractKeyPoints } from '../utils/aiService'
 
 const SmartNotes = () => {
   const [notes, setNotes] = useState([])
@@ -17,6 +18,9 @@ const SmartNotes = () => {
   })
   const [newTag, setNewTag] = useState('')
   const [highlightText, setHighlightText] = useState('')
+  const [aiResult, setAiResult] = useState(null)
+  const [aiLoading, setAiLoading] = useState(false)
+  const [aiType, setAiType] = useState(null)
 
   const subjects = ['Math', 'Physics', 'Chemistry', 'Biology', 'History', 'English', 'ICT', 'GCED', 'CLISE', 'Vietnamese Studies']
 
@@ -222,23 +226,82 @@ const SmartNotes = () => {
   // Close note view
   const handleCloseNote = () => {
     setSelectedNote(null)
+    setAiResult(null)
+    setAiType(null)
   }
 
-  // AI Feature handlers (placeholders)
-  const handleSummarizeNote = (note) => {
-    alert('AI Summarize feature coming soon! This will generate a concise summary of your note.')
+  // AI Feature handlers
+  const handleSummarizeNote = async (note) => {
+    if (!note.content) {
+      alert('This note has no content to summarize.')
+      return
+    }
+    setAiLoading(true)
+    setAiType('summarize')
+    try {
+      const result = await summarizeText(note.content)
+      setAiResult(result)
+    } catch (error) {
+      alert('Error generating summary. Please try again.')
+    } finally {
+      setAiLoading(false)
+    }
   }
 
-  const handleExplainNote = (note) => {
-    alert('AI Explain feature coming soon! This will explain complex concepts in your note in simpler terms.')
+  const handleExplainNote = async (note) => {
+    if (!note.content) {
+      alert('This note has no content to explain.')
+      return
+    }
+    setAiLoading(true)
+    setAiType('explain')
+    try {
+      const result = await explainText(note.content)
+      setAiResult(result)
+    } catch (error) {
+      alert('Error generating explanation. Please try again.')
+    } finally {
+      setAiLoading(false)
+    }
   }
 
-  const handleGenerateQuestions = (note) => {
-    alert('AI Question Generator coming soon! This will generate study questions based on your note.')
+  const handleGenerateQuestions = async (note) => {
+    if (!note.content) {
+      alert('This note has no content to generate questions from.')
+      return
+    }
+    setAiLoading(true)
+    setAiType('questions')
+    try {
+      const result = await generateQuestions(note.content)
+      setAiResult(result)
+    } catch (error) {
+      alert('Error generating questions. Please try again.')
+    } finally {
+      setAiLoading(false)
+    }
   }
 
-  const handleKeyPoints = (note) => {
-    alert('AI Key Points feature coming soon! This will extract the main key points from your note.')
+  const handleKeyPoints = async (note) => {
+    if (!note.content) {
+      alert('This note has no content to extract key points from.')
+      return
+    }
+    setAiLoading(true)
+    setAiType('keypoints')
+    try {
+      const result = await extractKeyPoints(note.content)
+      setAiResult(result)
+    } catch (error) {
+      alert('Error extracting key points. Please try again.')
+    } finally {
+      setAiLoading(false)
+    }
+  }
+
+  const handleCloseAIResult = () => {
+    setAiResult(null)
+    setAiType(null)
   }
 
   // Highlight content with highlights
@@ -513,15 +576,49 @@ const SmartNotes = () => {
 
             {/* Note Content */}
             <div className="p-6 overflow-y-auto flex-1 bg-cozy-50 rounded-xl">
-              <div
-                className="prose max-w-none text-cozy-700 break-words leading-relaxed"
-                dangerouslySetInnerHTML={{
-                  __html: highlightContent(
-                    selectedNote.content,
-                    selectedNote.highlights
-                  )
-                }}
-              />
+              {aiLoading ? (
+                <div className="flex flex-col items-center justify-center py-12">
+                  <Loader2 size={32} className="text-primary-600 animate-spin mb-4" />
+                  <p className="text-cozy-600">AI is processing your request...</p>
+                </div>
+              ) : aiResult ? (
+                <div className="space-y-4">
+                  <div className="flex items-center justify-between mb-4">
+                    <h3 className="text-lg font-semibold text-cozy-900">AI Result</h3>
+                    <button
+                      onClick={handleCloseAIResult}
+                      className="btn-secondary text-sm"
+                    >
+                      Close
+                    </button>
+                  </div>
+                  <div className="prose max-w-none text-cozy-700 break-words leading-relaxed whitespace-pre-wrap bg-white p-4 rounded-xl border border-cozy-200">
+                    {aiResult}
+                  </div>
+                  <div className="border-t border-cozy-200 pt-4">
+                    <h4 className="font-semibold text-cozy-900 mb-2">Original Note:</h4>
+                    <div
+                      className="prose max-w-none text-cozy-700 break-words leading-relaxed"
+                      dangerouslySetInnerHTML={{
+                        __html: highlightContent(
+                          selectedNote.content,
+                          selectedNote.highlights
+                        )
+                      }}
+                    />
+                  </div>
+                </div>
+              ) : (
+                <div
+                  className="prose max-w-none text-cozy-700 break-words leading-relaxed"
+                  dangerouslySetInnerHTML={{
+                    __html: highlightContent(
+                      selectedNote.content,
+                      selectedNote.highlights
+                    )
+                  }}
+                />
+              )}
             </div>
           </div>
         </div>

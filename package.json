@@ -1,9 +1,9 @@
 {
-  "name": "studyhub-ai",
+  "name": "studyhub",
   "version": "1.0.0",
   "type": "module",
   "description": "An all-in-one study platform for students to organize, learn, and stay motivated",
-  "homepage": "https://phamlemanhhung.github.io/studyhub1/",
+  "homepage": "https://phamlemanhhung.github.io/studyhub/",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
